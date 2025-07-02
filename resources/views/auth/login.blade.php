@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="{{ asset('backend/loginPage/style.css') }}">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
+
 <body>
 
     <div class="container">
@@ -38,7 +40,8 @@
                 <div class="input-box">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
                         <span class="captcha-img">{!! captcha_img('flat') !!}</span>
-                        <button type="button" id="reload" style="background: #0d6efd; color: white; border: none; border-radius: 5px; padding: 5px 10px; font-size: 18px; cursor: pointer;">&#x21bb;</button>
+                        <button type="button" id="reload"
+                            style="background: #0d6efd; color: white; border: none; border-radius: 5px; padding: 5px 10px; font-size: 18px; cursor: pointer;">&#x21bb;</button>
                     </div>
                     <input type="text" id="captcha" name="captcha" required placeholder="Enter Captcha">
                 </div>
@@ -50,22 +53,29 @@
         </div>
 
         <div class="form-box register">
-            {{-- Kita akan membuat route dan controller untuk ini nanti --}}
-            <form action="#">
-                <h1>Registration</h1>
-                <div class="input-box">
-                    <input type="text" placeholder="Username" required>
-                    <i class='bx bxs-user'></i>
-                </div>
-                <div class="input-box">
-                    <input type="email" placeholder="Email" required>
-                    <i class='bx bxs-envelope'></i>
-                </div>
-                <div class="input-box">
-                    <input type="password" placeholder="Password" required>
-                    <i class='bx bxs-lock-alt'></i>
-                </div>
-                <button type="submit" class="btn">Register</button>
+            <form action="{{ route('register') }}" method="POST"> {{-- <-- UBAH INI --}} @csrf {{-- <-- TAMBAHKAN INI
+                    --}} <h1>Registration</h1>
+                    <div class="input-box">
+                        {{-- Tambahkan atribut 'name' --}}
+                        <input type="text" name="name" placeholder="Username" required value="{{ old('name') }}">
+                        <i class='bx bxs-user'></i>
+                    </div>
+                    <div class="input-box">
+                        {{-- Tambahkan atribut 'name' --}}
+                        <input type="email" name="email" placeholder="Email" required value="{{ old('email') }}">
+                        <i class='bx bxs-envelope'></i>
+                    </div>
+                    <div class="input-box">
+                        {{-- Tambahkan atribut 'name' --}}
+                        <input type="password" name="password" placeholder="Password" required>
+                        <i class='bx bxs-lock-alt'></i>
+                    </div>
+                    <div class="input-box">
+                        {{-- Tambahkan konfirmasi password --}}
+                        <input type="password" name="password_confirmation" placeholder="Confirm Password" required>
+                        <i class='bx bxs-lock-alt'></i>
+                    </div>
+                    <button type="submit" class="btn">Register</button>
             </form>
         </div>
 
@@ -97,4 +107,5 @@
         });
     </script>
 </body>
+
 </html>
