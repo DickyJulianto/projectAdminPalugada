@@ -1,4 +1,25 @@
-public function login(Request $request)
+<?php
+
+namespace App\Http\Controllers\Auth;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class LoginController extends Controller
+{
+    /**
+     * Menampilkan form login.
+     */
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    /**
+     * Menangani permintaan login.
+     */
+    public function login(Request $request)
     {
         // 1. Validasi input, termasuk captcha
         $credentials = $request->validate([
@@ -10,17 +31,26 @@ public function login(Request $request)
         // Hapus 'captcha' dari array agar tidak ikut dalam proses autentikasi
         unset($credentials['captcha']);
 
-        // 2. Coba untuk melakukan autentikasi dengan kredensial yang sudah divalidasi
+        // 2. Coba untuk melakukan autentikasi
         if (Auth::attempt($credentials)) {
-            // Regenerasi session untuk keamanan
             $request->session()->regenerate();
-
-            // Arahkan ke dashboard jika berhasil
-            return redirect()->intended('/dashboard');
+            return redirect()->intended('dashboard'); // Arahkan ke dashboard
         }
 
-        // 3. Jika gagal, kembali ke login dengan pesan error
+        // 3. Jika gagal, kembali dengan pesan error
         return back()->withErrors([
             'email' => 'The provided credentials do not match our records.',
         ])->onlyInput('email');
     }
+
+    /**
+     * Menangani permintaan logout.
+     */
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
+}

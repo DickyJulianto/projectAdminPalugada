@@ -1,23 +1,31 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController; // Panggil LoginController
+use App\Http\Controllers\Auth\LoginController;
 
-// Rute utama dialihkan ke login jika belum terautentikasi
+// Rute untuk reload Captcha
+Route::get('/captcha-reload', function () {
+    return response()->json(['captcha'=> captcha_img('flat')]);
+})->name('captcha.reload');
+
+// Rute utama dialihkan ke login
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-// Grup rute untuk autentikasi
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [LoginController::class, 'login']);
-Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+// Grup rute untuk tamu (belum login)
+Route::middleware('guest')->group(function () {
+    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [LoginController::class, 'login']);
+});
 
-// Grup rute untuk area admin yang dilindungi
-Route::middleware(['auth'])->group(function () {
+// Grup rute untuk area admin yang memerlukan autentikasi
+Route::middleware('auth')->group(function () {
     Route::get('/dashboard', function () {
         return view('admin.dashboard');
     })->name('dashboard');
 
-    // Tambahkan rute dashboard lainnya di sini
+    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+
+    // Tambahkan rute admin lainnya di sini
 });
