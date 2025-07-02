@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController; // <-- TAMBAHKAN INI
+use App\Http\Controllers\AnggotaController;
+
+Route::resource('anggota', AnggotaController::class);
 
 // Rute untuk reload Captcha
 Route::get('/captcha-reload', function () {
