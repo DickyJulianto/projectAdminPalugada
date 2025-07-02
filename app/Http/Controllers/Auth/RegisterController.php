@@ -4,47 +4,69 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\View\View;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use RegistersUsers;
+
     /**
-     * Menampilkan form registrasi.
-     * Karena form ada di halaman login, kita tampilkan view login.
+     * Where to redirect users after registration.
+     *
+     * @var string
      */
-    public function showRegistrationForm(): View
+    protected $redirectTo = '/home';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        return view('auth.login');
+        $this->middleware('guest');
     }
 
     /**
-     * Menangani permintaan registrasi dari formulir.
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
      */
-    public function register(Request $request): RedirectResponse
+    protected function validator(array $data)
     {
-        // 1. Validasi data input dari form
-        $request->validate([
+        return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+    }
 
-        // 2. Buat pengguna baru di database
-        // Hash::make adalah implementasi kriptografi untuk mengamankan password
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\Models\User
+     */
+    protected function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
         ]);
-
-        // 3. Login pengguna yang baru dibuat
-        Auth::login($user);
-
-        // 4. Arahkan ke dashboard
-        return redirect('/dashboard');
     }
 }

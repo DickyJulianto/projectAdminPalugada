@@ -1,37 +1,37 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController; // <-- TAMBAHKAN INI
-use App\Http\Controllers\AnggotaController;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\ProdukController;
 
-Route::resource('anggota', AnggotaController::class);
-
-// Rute untuk reload Captcha
+// Rute untuk reload Captcha (jika masih digunakan)
 Route::get('/captcha-reload', function () {
-    return response()->json(['captcha'=> captcha_img('flat')]);
+    return response()->json(['captcha' => captcha_img('flat')]);
 })->name('captcha.reload');
 
 // Rute utama dialihkan ke login
 Route::get('/', function () {
-    return redirect()->route('login');
+    // Jika pengguna sudah login, arahkan ke dashboard. Jika belum, ke login.
+    return Auth::check() ? redirect()->route('dashboard') : redirect()->route('login');
 });
 
-// Grup rute untuk tamu (belum login)
-Route::middleware('guest')->group(function () {
-    Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-    Route::post('login', [LoginController::class, 'login']);
+// Membuat semua rute otentikasi (login, register, logout, reset password, verifikasi email)
+Auth::routes(['verify' => true]);
 
-    // Rute untuk registrasi (BARU)
-    Route::get('register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('register', [RegisterController::class, 'register']);
-});
-
-// Grup rute untuk area admin yang memerlukan autentikasi
-Route::middleware('auth')->group(function () {
+// Grup rute untuk area yang memerlukan login DAN verifikasi email
+Route::middleware(['auth', 'verified'])->group(function () {
+    // Rute dashboard utama
     Route::get('/dashboard', function () {
-        return view('admin.dashboard');
+        return view('admin.dashboard'); // Pastikan view ini ada
     })->name('dashboard');
 
-    Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+    // Resource Route untuk CRUD Produk
+    Route::resource('produk', ProdukController::class);
 });
+
+// Anda dapat menghapus rute manual untuk login/register/logout
+// karena sudah ditangani oleh Auth::routes()
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
