@@ -14,27 +14,31 @@
 
     <div class="container">
         <div class="form-box login">
-            <form action="">
-                <h1>Login</h1>
+            <form action="{{ route('login') }}" method="POST">
+                @csrf <h1>Login</h1>
+
+                @if ($errors->any())
+                    <div style="color: red; margin-bottom: 15px;">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div class="input-box">
-                    <input type="text" placeholder="Username" required>
+                    <input type="email" name="email" placeholder="Email" required value="{{ old('email') }}">
                     <i class='bx bxs-user'></i>
                 </div>
                 <div class="input-box">
-                    <input type="password" placeholder="Password" required>
+                    <input type="password" name="password" placeholder="Password" required>
                     <i class='bx bxs-lock-alt'></i>
                 </div>
                 <div class="forgot-link">
                     <a href="#">Forgot password?</a>
                 </div>
                 <button type="submit" class="btn">Login</button>
-                <p>or login with social platforms</p>
-                <div class="social-icons">
-                    <a href="#"><i class='bx bxl-google'></i></a>
-                    <a href="#"><i class='bx bxl-facebook'></i></a>
-                    <a href="#"><i class='bx bxl-github'></i></a>
-                    <a href="#"><i class='bx bxl-linkedin'></i></a>
-                </div>
             </form>
         </div>
 
