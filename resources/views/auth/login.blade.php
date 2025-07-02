@@ -15,7 +15,8 @@
     <div class="container">
         <div class="form-box login">
             <form action="{{ route('login') }}" method="POST">
-                @csrf <h1>Login</h1>
+                @csrf
+                <h1>Login</h1>
 
                 @if ($errors->any())
                     <div style="color: red; margin-bottom: 15px;">
@@ -35,6 +36,14 @@
                     <input type="password" name="password" placeholder="Password" required>
                     <i class='bx bxs-lock-alt'></i>
                 </div>
+
+                {{-- Kode Captcha --}}
+                <div class="input-box" style="display: flex; align-items: center; gap: 10px;">
+                    <span class="captcha-img">{!! captcha_img('flat') !!}</span>
+                    <input type="text" id="captcha" name="captcha" required="" placeholder="Enter Captcha">
+                </div>
+
+                {{-- Hanya ada satu "Forgot password?" dan satu tombol Login --}}
                 <div class="forgot-link">
                     <a href="#">Forgot password?</a>
                 </div>
